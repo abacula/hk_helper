@@ -1,72 +1,67 @@
-import pprint
-from collections import defaultdict
-from ConnectionsMap import ConnectionsMap
+from GetConnections import GetConnections
+
+class PathPlan:
+    def __init__(self,filename):
+        connections = GetConnections(filename)
+        self.nodes,_ = connections.getConnections()
+        # print(self.nodes)
+
+    def getPath(self,node1,node2,possPaths=[]):
+        startIndices = []
+        endIndices = []
+
+        i = 0
+        for location in self.nodes[0]:
+            if location == node1:
+                startIndices.append(i)
+            i += 1
+
+        i = 0
+        for location in self.nodes[2]:
+            if location == node2:
+                endIndices.append(i)
+            i += 1
+
+        # This is all gross and wrong
+               
+        for startIndex in startIndices:
+            path = [] 
+            path.append(startIndex)
+            nextIndices = self.getNext(startIndex)
+            end = False
+            while not end:
+                for index in nextIndices:
+                    path.append(index)
+                    if index in endIndices:
+                        end = True
+                        possPaths.append(path)
+                        print(path)
+                    else:
+                        nextIndices = self.getNext(index)
+
+        return possPaths
+        
+
+    def getNext(self,index,nextIndices=[]):
+        nextLoc = self.nodes[2][index]
+        i = 0
+        for location in self.nodes[0]:
+            if location == nextLoc:
+                nextIndices.append(i)
+            i += 1
+        return nextIndices
 
 
-class Graph(object):
-    """ Graph data structure, undirected by default. """
 
-    def __init__(self, directed=False):
-        self._graph = defaultdict(set)
-        self._directed = directed
-        connections_node = ConnectionsMap()
-        connections = ConnectionsMap.get_connections(connections_node)
-        self.add_connections(connections)
 
-    def add_connections(self, connections):
-        """ Add connections (list of tuple pairs) to graph """
-
-        for node1, node2 in connections:
-            self.add(node1, node2)
-
-    def add(self, node1, node2):
-        """ Add connection between node1 and node2 """
-
-        self._graph[node1].add(node2)
-        if not self._directed:
-            self._graph[node2].add(node1)
-
-    def remove(self, node):
-        """ Remove all references to node """
-
-        for n, cxns in self._graph.items():  # python3: items(); python2: iteritems()
-            try:
-                cxns.remove(node)
-            except KeyError:
-                pass
-        try:
-            del self._graph[node]
-        except KeyError:
-            pass
-
-    def is_connected(self, node1, node2):
-        """ Is node1 directly connected to node2 """
-
-        return node1 in self._graph and node2 in self._graph[node1]
-
-    def find_path(self, node1, node2, path=[]):
-        """ Find any path between node1 and node2 (may not be shortest) """
-
-        path = path + [node1]
-        if node1 == node2:
-            return path
-        if node1 not in self._graph:
-            return None
-        for node in self._graph[node1]:
-            if node not in path:
-                new_path = self.find_path(node, node2, path)
-                if new_path:
-                    return new_path
-        return None
-
-    def __str__(self):
-        return '{}({})'.format(self.__class__.__name__, dict(self._graph))
-    
 def main(args=None):
-    graph = Graph()
-    node1 = input("Node 1: ")
-    node2 = input("Node 2: ")
-    print(graph.find_path(node1,node2))
+    userFile = input("What file: ")
+    planner = PathPlan(userFile)
+    # node1 = input("Node 1: ")
+    # node2 = input("Node 2: ")
+    node1 = "Tutorial_01"
+    node2 = "Crossroads_16"
+    print(planner.getPath(node1,node2))
 
 
 if __name__ == '__main__':

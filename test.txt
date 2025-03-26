@@ -1,0 +1,9 @@
+flkjakdlsfa
+safjkldasf
+CHECKED TRANSITIONS  
+  Tutorial_01[right1]  -->  Mines_17[left1]
+  Mines_17[left1]  -->  Tutorial_01[right1]
+  Mines_17[right1]  -->  Fungus2_09[left1]
+  Fungus2_09[left1]  -->  Mines_17[right1]
+  Fungus2_09[right1]  -->  Mines_20[left2]
+  Mines_20[left2]  -->  Fungus2_09[right1]
